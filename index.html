@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Coming Soon</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #ffffff;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: url("background.jpg") center center / cover no-repeat fixed;
+    }
+
+    .wrap {
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 8vw, 4.2rem);
+      margin-bottom: 2rem;
+    }
+
+    p {
+      font-size: clamp(1.1rem, 3.4vw, 1.4rem);
+      margin-bottom: 0.6rem;
+    }
+
+    .email {
+      font-size: clamp(1.1rem, 3.4vw, 1.4rem);
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      body { background-attachment: scroll; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Coming Soon</h1>
+    <p>Get in touch</p>
+    <p class="email">sagar@zeistinteractive.com</p>
+  </div>
+</body>
+</html>
