@@ -6,7 +6,11 @@
   <title>IdeaCulture - Coming Soon</title>
   <link rel="icon" type="image/png" href="logo.png" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { 
+      margin: 0; 
+      padding: 0; 
+      box-sizing: border-box; 
+    }
 
     body {
       min-height: 100vh;
@@ -16,37 +20,62 @@
       text-align: center;
       color: #ffffff;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: url("background.jpg") center center / cover no-repeat fixed;
+      /* Added a semi-transparent dark overlay to ensure text is always readable over the image */
+      background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url("background.jpg") center center / cover no-repeat fixed;
+      padding: 1rem;
     }
 
     .wrap {
+      width: 100%;
+      max-width: 600px;
       padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .logo {
-      width: clamp(500px, 15vw, 500px);
-      margin-bottom: 75px;
-      margin-top: 75px;
+      /* Responsive logo: Takes full width on tiny screens, caps out at 350px on larger ones */
+      width: 100%;
+      max-width: 450px;
+      height: auto;
+      margin-bottom: 5rem;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      margin-top: 50px;
+      /* Fluid typography: scales smoothly between 2rem and 3rem based on screen width */
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
     }
 
     p {
-      font-size: clamp(1.1rem, 3.4vw, 1.4rem);
-      margin-bottom: 0.6rem;
+      font-size: clamp(1rem, 4vw, 1.2rem);
+      margin-bottom: 0.5rem;
+      color: #e2e8f0; /* Slightly dimmed for better visual hierarchy */
     }
 
     .email {
-      font-size: clamp(1.1rem, 3.4vw, 1.4rem);
+      font-size: clamp(1.1rem, 4.5vw, 1.4rem);
       font-weight: 600;
+      color: #ffffff;
+      margin-top: 0.5rem;
+      /* Crucial for mobile: prevents long email addresses from breaking the page width */
+      word-break: break-word; 
     }
 
+    /* Mobile-specific adjustments */
     @media (max-width: 640px) {
-      body { background-attachment: scroll; }
+      body { 
+        background-attachment: scroll; 
+      }
+      .wrap {
+        padding: 1.5rem 1rem;
+      }
+      .logo {
+        margin-bottom: 2rem;
+        max-width: 280px; /* Slightly smaller logo on phones */
+      }
     }
   </style>
 </head>
