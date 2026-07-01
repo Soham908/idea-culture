@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swar Sadhana — Pitch Practice</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #0f0f1a;
+      --surface: #1a1a2e;
+      --surface-2: #242440;
+      --text: #e0e0e8;
+      --text-dim: #7a7a8e;
+      --green: #00e676;
+      --green-soft: #69f0ae;
+      --yellow: #ffd740;
+      --orange: #ff9100;
+      --red: #ff5252;
+      --accent: #7c4dff;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      user-select: none;
+      overflow-x: hidden;
+    }
+
+    /* ---- Top Controls ---- */
+    .controls {
+      width: 100%;
+      max-width: 700px;
+      padding: 24px 20px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .controls label {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .sa-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--surface-2);
+      border-radius: 10px;
+      padding: 8px 14px;
+    }
+
+    select {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid #3a3a5c;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      outline: none;
+    }
+
+    select:focus {
+      border-color: var(--accent);
+    }
+
+    .sa-hz {
+      font-size: 13px;
+      color: var(--text-dim);
+      font-variant-numeric: tabular-nums;
+      min-width: 65px;
+    }
+
+    .btn {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid #3a3a5c;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn:hover {
+      background: #2e2e50;
+      border-color: var(--accent);
+    }
+
+    .btn-mic {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      padding: 8px 24px;
+    }
+
+    .btn-mic:hover {
+      background: #6a3de8;
+    }
+
+    .btn-mic.active {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    .btn-mic.active:hover {
+      background: #e04545;
+    }
+
+    .btn-detect {
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
+    /* ---- Main Display ---- */
+    .main-display {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      width: 100%;
+      max-width: 700px;
+      min-height: 380px;
+    }
+
+    .octave-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      min-height: 20px;
+      transition: color 0.2s;
+    }
+
+    .swar-name {
+      font-family: 'Noto Sans Devanagari', 'Inter', sans-serif;
+      font-size: 120px;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--text-dim);
+      transition: color 0.15s;
+      min-height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .swar-variant {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text-dim);
+      margin-top: 4px;
+      min-height: 22px;
+    }
+
+    /* ---- Deviation Meter ---- */
+    .meter-container {
+      width: 100%;
+      max-width: 400px;
+      margin: 28px 0 16px;
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 8px;
+      background: linear-gradient(to right,
+          var(--red) 0%,
+          var(--orange) 20%,
+          var(--yellow) 35%,
+          var(--green) 45%,
+          var(--green) 55%,
+          var(--yellow) 65%,
+          var(--orange) 80%,
+          var(--red) 100%);
+      border-radius: 4px;
+      position: relative;
+      opacity: 0.3;
+      transition: opacity 0.2s;
+    }
+
+    .meter-track.active {
+      opacity: 1;
+    }
+
+    .meter-needle {
+      position: absolute;
+      top: -6px;
+      width: 4px;
+      height: 20px;
+      background: #fff;
+      border-radius: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: left 0.08s ease-out;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+    }
+
+    .meter-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 6px;
+      padding: 0 2px;
+    }
+
+    /* ---- Feedback Text ---- */
+    .feedback {
+      font-size: 18px;
+      font-weight: 500;
+      min-height: 28px;
+      margin-top: 8px;
+      transition: color 0.15s;
+      color: var(--text-dim);
+    }
+
+    .freq-info {
+      font-size: 12px;
+      color: var(--text-dim);
+      font-variant-numeric: tabular-nums;
+      margin-top: 14px;
+      min-height: 18px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ---- Swar Strip ---- */
+    .swar-strip-container {
+      width: 100%;
+      max-width: 700px;
+      padding: 16px 20px 28px;
+    }
+
+    .swar-strip {
+      display: flex;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .swar-block {
+      flex: 1;
+      text-align: center;
+      padding: 8px 2px;
+      background: var(--surface);
+      border: 1px solid var(--surface-2);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-dim);
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s, border-color 0.12s, transform 0.12s, box-shadow 0.12s;
+    }
+
+    .swar-block:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .swar-block.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      transform: scaleY(1.12);
+    }
+
+    .swar-block.playing {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+
+    .btn-tone.active {
+      background: #0e2a18;
+      color: var(--green);
+      border-color: var(--green);
+    }
+
+    .btn-scale.active {
+      background: #1a1230;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .swar-block .block-label {
+      font-size: 9px;
+      opacity: 0.6;
+      display: block;
+      margin-top: 2px;
+    }
+
+    /* ---- Reference Frequency Strip ---- */
+    .ref-strip {
+      display: flex;
+      gap: 3px;
+      width: 100%;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--surface-2);
+    }
+
+    .ref-item {
+      flex: 1;
+      text-align: center;
+    }
+
+    .ref-name {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-dim);
+      opacity: 0.7;
+    }
+
+    .ref-hz {
+      display: block;
+      font-size: 9px;
+      color: var(--text-dim);
+      opacity: 0.4;
+      font-variant-numeric: tabular-nums;
+      margin-top: 2px;
+    }
+
+    /* ---- Tolerance Slider ---- */
+    .tolerance-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--surface);
+      border: 1px solid var(--surface-2);
+      border-radius: 10px;
+      padding: 6px 12px;
+    }
+
+    .tolerance-group > label {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .tol-end {
+      font-size: 10px;
+      color: var(--text-dim);
+      opacity: 0.55;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 80px;
+      height: 4px;
+      background: var(--surface-2);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-komal.active {
+      background: #1e1a30;
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    /* ---- Permission / Error States ---- */
+    .message-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 26, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+
+    .message-overlay.show {
+      display: flex;
+    }
+
+    .message-box {
+      background: var(--surface);
+      border: 1px solid var(--surface-2);
+      border-radius: 14px;
+      padding: 32px;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .message-box p {
+      margin-bottom: 16px;
+      line-height: 1.5;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    .message-box .error-text {
+      color: var(--red);
+    }
+
+    /* ---- Detect Sa overlay ---- */
+    .detect-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 15, 26, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .detect-overlay.show {
+      display: flex;
+    }
+
+    .detect-box {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 14px;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .detect-box p {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .detect-box .detect-hz {
+      font-size: 56px;
+      font-weight: 700;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+      margin-top: 12px;
+    }
+
+    .detect-countdown {
+      font-size: 14px;
+      color: var(--text-dim);
+      margin-top: 8px;
+    }
+
+    @media (max-width: 500px) {
+      .swar-name {
+        font-size: 80px;
+        min-height: 90px;
+      }
+
+      .meter-container {
+        max-width: 90%;
+      }
+
+      .swar-block {
+        font-size: 10px;
+        padding: 6px 1px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="sa-group">
+      <label>Sa</label>
+      <select id="saSelect">
+        <option value="123.47">B2</option>
+        <option value="130.81">C3</option>
+        <option value="138.59" selected>C#3</option>
+        <option value="146.83">D3</option>
+        <option value="155.56">D#3</option>
+        <option value="164.81">E3</option>
+      </select>
+      <span class="sa-hz" id="saHz">138.59 Hz</span>
+      <button class="btn btn-detect" id="detectSaBtn">Detect Sa</button>
+      <button class="btn btn-detect btn-tone" id="playSaBtn">♪ Sa</button>
+    </div>
+    <div class="tolerance-group">
+      <label>Sensitivity</label>
+      <span class="tol-end">Strict</span>
+      <input type="range" id="toleranceSlider" min="5" max="50" value="25">
+      <span class="tol-end">Easy</span>
+    </div>
+    <button class="btn btn-komal btn-detect" id="komalBtn">Komal/Tivra</button>
+    <button class="btn btn-scale" id="playScaleBtn">▷ Scale</button>
+    <button class="btn btn-detect" id="calibrateBtn">Calibrate</button>
+    <button class="btn btn-mic" id="micBtn">Start</button>
+  </div>
+
+  <!-- Main Display -->
+  <div class="main-display">
+    <div class="octave-label" id="octaveLabel">—</div>
+    <div class="swar-name" id="swarName">—</div>
+    <div class="swar-variant" id="swarVariant"></div>
+
+    <div class="meter-container">
+      <div class="meter-track" id="meterTrack">
+        <div class="meter-needle" id="meterNeedle"></div>
+      </div>
+      <div class="meter-labels">
+        <span>flat</span>
+        <span>sharp</span>
+      </div>
+    </div>
+
+    <div class="feedback" id="feedback">Press Start and sing</div>
+    <div class="freq-info" id="freqInfo"></div>
+  </div>
+
+  <!-- Swar Strip -->
+  <div class="swar-strip-container">
+    <div class="ref-strip" id="refStrip"></div>
+    <div class="swar-strip" id="swarStrip"></div>
+  </div>
+
+  <!-- Mic Permission Error -->
+  <div class="message-overlay" id="errorOverlay">
+    <div class="message-box">
+      <p class="error-text" id="errorText">Microphone access is needed for pitch detection.</p>
+      <button class="btn" onclick="document.getElementById('errorOverlay').classList.remove('show')">OK</button>
+    </div>
+  </div>
+
+  <!-- Detect Sa Overlay -->
+  <div class="detect-overlay" id="detectOverlay">
+    <div class="detect-box">
+      <p>Sing or play your Sa...</p>
+      <div class="detect-hz" id="detectHz">— Hz</div>
+      <div class="detect-countdown" id="detectCountdown">3s remaining</div>
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // TUNING CONSTANTS — adjust to suit your mic and room
+    // ============================================================
+    const RMS_SILENCE_GATE   = 0.02;  // raise if noise triggers false detections
+    const YIN_THRESHOLD      = 0.20;  // lower = stricter; raise if weak mic misses frames
+    const YIN_CONFIDENCE_MAX = 0.50;  // skip frame when best tau's aperiodicity exceeds this
+    const SMOOTH_BUF_SIZE    = 5;     // median filter window — larger = smoother but laggier
+
+    // Active silence gate — starts at the constant above; updated by Calibrate button
+    let rmsGate = RMS_SILENCE_GATE;
+
+    // ============================================================
+    // SWAR DEFINITIONS — Just Intonation Ratios
+    // ============================================================
+    const SWAR_RATIOS = [
+      { name: 'Sa', abbr: 'S', ratio: 1, type: 'Achal', variant: '' },
+      { name: 'Re', abbr: 'r', ratio: 16 / 15, type: 'Komal', variant: 'Komal' },
+      { name: 'Re', abbr: 'R', ratio: 9 / 8, type: 'Shuddha', variant: 'Shuddha' },
+      { name: 'Ga', abbr: 'g', ratio: 6 / 5, type: 'Komal', variant: 'Komal' },
+      { name: 'Ga', abbr: 'G', ratio: 5 / 4, type: 'Shuddha', variant: 'Shuddha' },
+      { name: 'Ma', abbr: 'm', ratio: 4 / 3, type: 'Shuddha', variant: 'Shuddha' },
+      { name: 'Ma', abbr: 'M', ratio: 45 / 32, type: 'Tivra', variant: 'Tivra' },
+      { name: 'Pa', abbr: 'P', ratio: 3 / 2, type: 'Achal', variant: '' },
+      { name: 'Dha', abbr: 'd', ratio: 8 / 5, type: 'Komal', variant: 'Komal' },
+      { name: 'Dha', abbr: 'D', ratio: 5 / 3, type: 'Shuddha', variant: 'Shuddha' },
+      { name: 'Ni', abbr: 'n', ratio: 9 / 5, type: 'Komal', variant: 'Komal' },
+      { name: 'Ni', abbr: 'N', ratio: 15 / 8, type: 'Shuddha', variant: 'Shuddha' },
+    ];
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    let saFreq = 138.59;
+    let swarFreqs = [];       // computed target frequencies across 3 octaves
+    let audioCtx = null;
+    let analyser = null;
+    let micStream = null;
+    let isListening = false;
+    let animFrameId = null;
+
+    // Median smoothing buffer for detected frequencies (cleared on silence)
+    let freqBuffer = [];
+
+    // Octave continuity — tracks the last confidently-displayed swar
+    let lastConfidentOctave = '';
+    let lastConfidentName   = '';
+    let lastConfidentType   = '';
+
+    // Stability tracking
+    let lastSwarIdx = -1;
+    let stableCount = 0;
+    const STABLE_FRAMES_NEEDED = 2;
+
+    // UI preferences
+    let toleranceCents = 25;
+    let showKomal = false;
+
+    // Reference tone state (Sa drone, swar strip tap, scale playback)
+    let saOsc = null, saOscGain = null;
+    let swarToneOsc = null, swarToneGain = null, swarToneTimer = null;
+    let scaleOscs = [], scaleTimer = null;
+
+    // ============================================================
+    // COMPUTE SWAR FREQUENCIES
+    // ============================================================
+    function computeSwarFreqs() {
+      swarFreqs = [];
+      const octaves = [
+        { name: 'Mandra', mult: 0.5 },
+        { name: 'Madhya', mult: 1.0 },
+        { name: 'Taar', mult: 2.0 },
+      ];
+      for (const oct of octaves) {
+        for (let i = 0; i < SWAR_RATIOS.length; i++) {
+          const s = SWAR_RATIOS[i];
+          swarFreqs.push({
+            freq: saFreq * s.ratio * oct.mult,
+            name: s.name,
+            abbr: s.abbr,
+            variant: s.variant,
+            type: s.type,
+            octave: oct.name,
+            ratioIdx: i,
+          });
+        }
+      }
+      // Also add the upper Sa of Taar for boundary
+      swarFreqs.push({
+        freq: saFreq * 2 * 2,
+        name: 'Sa', abbr: 'S', variant: '', type: 'Achal', octave: 'Taar+', ratioIdx: 0
+      });
+      buildSwarStrip();
+      buildRefStrip();
+    }
+
+    // ============================================================
+    // FIND NEAREST SWAR
+    // ============================================================
+    function findNearestSwar(freq) {
+      let closest = null;
+      let minCents = Infinity;
+      for (const s of swarFreqs) {
+        const cents = 1200 * Math.log2(freq / s.freq);
+        if (Math.abs(cents) < Math.abs(minCents)) {
+          minCents = cents;
+          closest = s;
+        }
+      }
+
+      // Octave continuity: if we'd switch octaves for the same swar name+type,
+      // only allow it when the new octave is > 100 ¢ closer than the last known one.
+      // Prevents Sa from bouncing between Mandra/Madhya/Taar on borderline frames.
+      if (lastConfidentName && closest
+          && closest.name   === lastConfidentName
+          && closest.type   === lastConfidentType
+          && closest.octave !== lastConfidentOctave) {
+        const preferred = swarFreqs.find(
+          s => s.name === lastConfidentName && s.type === lastConfidentType && s.octave === lastConfidentOctave
+        );
+        if (preferred) {
+          const prefCents = 1200 * Math.log2(freq / preferred.freq);
+          // Stick with previous octave unless the new one is clearly closer
+          if (Math.abs(prefCents) <= Math.abs(minCents) + 100) {
+            minCents = prefCents;
+            closest = preferred;
+          }
+        }
+      }
+
+      return { swar: closest, cents: minCents };
+    }
+
+    // ============================================================
+    // YIN PITCH DETECTION
+    // de Cheveigné & Kawahara (2002) — JASA 111(4)
+    // ============================================================
+    function detectPitch(buf, sampleRate) {
+      const n = buf.length;
+
+      // RMS silence gate
+      let rms = 0;
+      for (let i = 0; i < n; i++) rms += buf[i] * buf[i];
+      if (Math.sqrt(rms / n) < rmsGate) return -1;
+
+      // Pitch search range: 80–600 Hz
+      const minLag = Math.floor(sampleRate / 600);   // ~73 at 44100 Hz
+      const maxLag = Math.ceil(sampleRate / 80);     // ~551 at 44100 Hz
+      const W = Math.floor(n / 2);                   // correlation window (must be >= maxLag)
+
+      // Step 1 + 2 combined: difference function d[τ] and its
+      // cumulative mean normalisation d'[τ] in a single pass.
+      //   d[τ]  = Σ (x[i] − x[i+τ])²   for i = 0..W-1
+      //   d'[0] = 1
+      //   d'[τ] = d[τ] · τ / Σ d[1..τ]
+      const dn = new Float32Array(maxLag + 2);
+      dn[0] = 1;
+      let runningSum = 0;
+      for (let tau = 1; tau <= maxLag + 1; tau++) {
+        let dSum = 0;
+        for (let i = 0; i < W; i++) {
+          const diff = buf[i] - buf[i + tau];
+          dSum += diff * diff;
+        }
+        runningSum += dSum;
+        dn[tau] = dSum * tau / runningSum;
+      }
+
+      // Step 3: find the first τ in [minLag, maxLag] where d'[τ] dips
+      // below the threshold, then slide to the local minimum of that dip.
+      const THRESHOLD = YIN_THRESHOLD;
+      let tauEst = -1;
+      for (let tau = minLag; tau <= maxLag; tau++) {
+        if (dn[tau] < THRESHOLD) {
+          while (tau + 1 <= maxLag && dn[tau + 1] < dn[tau]) tau++;
+          tauEst = tau;
+          break;
+        }
+      }
+
+      // Fallback: no sub-threshold dip — pick the absolute minimum.
+      // Reject if it's still too high (unvoiced / noisy frame).
+      if (tauEst === -1) {
+        let minVal = Infinity;
+        for (let tau = minLag; tau <= maxLag; tau++) {
+          if (dn[tau] < minVal) { minVal = dn[tau]; tauEst = tau; }
+        }
+        if (minVal > 0.35) return -1;
+      }
+
+      // Low-confidence gate: skip frames whose best tau is still too aperiodic.
+      if (dn[tauEst] > YIN_CONFIDENCE_MAX) return -1;
+
+      // Step 4: parabolic interpolation around the minimum for
+      // sub-sample τ accuracy.  (We minimise, so formula differs
+      // from autocorrelation's peak interpolation.)
+      let betterTau = tauEst;
+      if (tauEst > minLag && tauEst < maxLag) {
+        const y0 = dn[tauEst - 1], y1 = dn[tauEst], y2 = dn[tauEst + 1];
+        const denom = y0 - 2 * y1 + y2;   // curvature; > 0 at a minimum
+        if (Math.abs(denom) > 1e-10) {
+          betterTau = tauEst - (y2 - y0) / (2 * denom);
+        }
+      }
+
+      return sampleRate / betterTau;
+    }
+
+    // ============================================================
+    // UI UPDATES
+    // ============================================================
+    const swarNameEl = document.getElementById('swarName');
+    const swarVariantEl = document.getElementById('swarVariant');
+    const octaveLabelEl = document.getElementById('octaveLabel');
+    const feedbackEl = document.getElementById('feedback');
+    const freqInfoEl = document.getElementById('freqInfo');
+    const meterTrack = document.getElementById('meterTrack');
+    const meterNeedle = document.getElementById('meterNeedle');
+
+    function updateDisplay(freq) {
+      if (freq <= 0) {
+        // Silence / no pitch
+        swarNameEl.textContent = '—';
+        swarNameEl.style.color = 'var(--text-dim)';
+        swarVariantEl.textContent = '';
+        octaveLabelEl.textContent = '—';
+        feedbackEl.textContent = 'Listening...';
+        feedbackEl.style.color = 'var(--text-dim)';
+        freqInfoEl.textContent = '';
+        meterTrack.classList.remove('active');
+        meterNeedle.style.left = '50%';
+        highlightStrip(-1);
+        lastSwarIdx = -1;
+        stableCount = 0;
+        // Clear octave continuity state and smoothing buffer on silence
+        freqBuffer = [];
+        lastConfidentOctave = '';
+        lastConfidentName   = '';
+        lastConfidentType   = '';
+        return;
+      }
+
+      const { swar, cents } = findNearestSwar(freq);
+      if (!swar) return;
+
+      // Stability check (2 consecutive frames within ±30 ¢ of same swar)
+      const currentIdx = swarFreqs.indexOf(swar);
+      if (currentIdx === lastSwarIdx && Math.abs(cents) < 30) {
+        stableCount++;
+      } else {
+        lastSwarIdx = currentIdx;
+        stableCount = 1;
+      }
+
+      if (stableCount < STABLE_FRAMES_NEEDED) {
+        // Show the raw frequency in the large display so the user can see the app is hearing them
+        swarNameEl.textContent = freq.toFixed(0);
+        swarNameEl.style.color = 'var(--text-dim)';
+        swarVariantEl.textContent = '';
+        octaveLabelEl.textContent = '';
+        feedbackEl.textContent = '';
+        freqInfoEl.textContent = '';
+        return;
+      }
+
+      // Octave
+      octaveLabelEl.textContent = swar.octave;
+
+      // Swar name
+      swarNameEl.textContent = swar.name;
+
+      // Variant
+      swarVariantEl.textContent = swar.variant;
+
+      // Lock in the confirmed octave so findNearestSwar can bias future frames
+      lastConfidentOctave = swar.octave;
+      lastConfidentName   = swar.name;
+      lastConfidentType   = swar.type;
+
+      // Color & feedback — zones scale with toleranceCents slider
+      const absCents = Math.abs(cents);
+      const tol = toleranceCents;
+      let color, feedbackText;
+
+      if (absCents <= tol) {
+        color = 'var(--green)';
+        feedbackText = '✓ sahi hai';
+      } else if (absCents <= tol * 2) {
+        color = 'var(--green-soft)';
+        feedbackText = '';
+      } else if (absCents <= tol * 3) {
+        color = 'var(--yellow)';
+        feedbackText = cents < 0 ? '↑ thoda upar' : '↓ thoda neeche';
+      } else {
+        color = 'var(--red)';
+        feedbackText = cents < 0 ? '↑↑ upar jao' : '↓↓ neeche aao';
+      }
+
+      swarNameEl.style.color = color;
+      feedbackEl.textContent = feedbackText;
+      feedbackEl.style.color = color;
+
+      // Meter needle — clamp cents to ±60 range for display
+      const clampedCents = Math.max(-60, Math.min(60, cents));
+      const pct = 50 + (clampedCents / 60) * 50;
+      meterNeedle.style.left = pct + '%';
+      meterTrack.classList.add('active');
+
+      // Freq info
+      freqInfoEl.textContent = `${freq.toFixed(1)} Hz → Target: ${swar.freq.toFixed(1)} Hz (${cents > 0 ? '+' : ''}${cents.toFixed(0)}¢)`;
+
+      // Highlight strip
+      highlightStrip(swar.ratioIdx);
+    }
+
+    // ============================================================
+    // SWAR STRIP
+    // ============================================================
+    function buildSwarStrip() {
+      const strip = document.getElementById('swarStrip');
+      strip.innerHTML = '';
+      // When komal is hidden, show only Achal + Shuddha (7 notes)
+      const visible = showKomal
+        ? SWAR_RATIOS
+        : SWAR_RATIOS.filter(s => s.type === 'Achal' || s.type === 'Shuddha');
+      for (const s of visible) {
+        const idx = SWAR_RATIOS.indexOf(s);
+        const div = document.createElement('div');
+        div.className = 'swar-block';
+        div.dataset.idx = idx;
+        div.innerHTML = `${s.abbr}<span class="block-label">${s.name}</span>`;
+        div.addEventListener('click', () => playSwarTone(idx));
+        strip.appendChild(div);
+      }
+    }
+
+    function buildRefStrip() {
+      const strip = document.getElementById('refStrip');
+      if (!strip) return;
+      strip.innerHTML = '';
+      // Always shows the 7 shuddha swars regardless of komal toggle
+      const shuddha = SWAR_RATIOS.filter(s => s.type === 'Achal' || s.type === 'Shuddha');
+      for (const s of shuddha) {
+        const freq = saFreq * s.ratio;
+        const el = document.createElement('div');
+        el.className = 'ref-item';
+        el.innerHTML =
+          `<span class="ref-name">${s.abbr}</span>` +
+          `<span class="ref-hz">${freq.toFixed(1)}</span>`;
+        strip.appendChild(el);
+      }
+    }
+
+    function highlightStrip(ratioIdx) {
+      const blocks = document.querySelectorAll('.swar-block');
+      blocks.forEach(b => {
+        b.classList.toggle('active', parseInt(b.dataset.idx) === ratioIdx);
+      });
+    }
+
+    // ============================================================
+    // AUDIO PIPELINE
+    // The pipeline (AudioContext + mic stream + AnalyserNode) is
+    // created once and kept alive across Stop/Start cycles.
+    // ensureAudioCtx() is also used by reference tone features so
+    // they can work without the mic ever being started.
+    // Only window.beforeunload fully tears it down.
+    // ============================================================
+    async function ensureAudioCtx() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') await audioCtx.resume();
+      return audioCtx;
+    }
+
+    async function startMic() {
+      const ctx = await ensureAudioCtx();
+
+      if (!analyser) {
+        // Build the mic input chain (only once — reuses ctx if already created by tones)
+        try {
+          micStream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+          });
+          const source = ctx.createMediaStreamSource(micStream);
+          analyser = ctx.createAnalyser();
+          analyser.fftSize = 4096;
+          source.connect(analyser);
+        } catch (err) {
+          const errorText = document.getElementById('errorText');
+          if (err.name === 'NotAllowedError') {
+            errorText.textContent = 'Microphone permission was denied. Please allow mic access and try again.';
+          } else {
+            errorText.textContent = 'Could not access microphone: ' + err.message;
+          }
+          document.getElementById('errorOverlay').classList.add('show');
+          return;
+        }
+      }
+
+      isListening = true;
+      document.getElementById('micBtn').textContent = 'Stop';
+      document.getElementById('micBtn').classList.add('active');
+      tick();
+    }
+
+    function stopMic() {
+      // Keep the audio pipeline alive — just pause the RAF loop
+      isListening = false;
+      if (animFrameId) { cancelAnimationFrame(animFrameId); animFrameId = null; }
+      document.getElementById('micBtn').textContent = 'Start';
+      document.getElementById('micBtn').classList.remove('active');
+      updateDisplay(-1);
+      feedbackEl.textContent = 'Press Start and sing';
+    }
+
+    function tick() {
+      if (!isListening) return;
+      const buf = new Float32Array(analyser.fftSize);
+      analyser.getFloatTimeDomainData(buf);
+      const raw = detectPitch(buf, audioCtx.sampleRate);
+
+      let displayFreq;
+      if (raw <= 0) {
+        freqBuffer = [];   // silence: reset the smoothing window
+        displayFreq = -1;
+      } else {
+        // Rolling median over the last SMOOTH_BUF_SIZE valid frames
+        freqBuffer.push(raw);
+        if (freqBuffer.length > SMOOTH_BUF_SIZE) freqBuffer.shift();
+        const sorted = freqBuffer.slice().sort((a, b) => a - b);
+        displayFreq = sorted[Math.floor(sorted.length / 2)];
+      }
+
+      updateDisplay(displayFreq);
+      animFrameId = requestAnimationFrame(tick);
+    }
+
+    // ============================================================
+    // DETECT SA
+    // Listens for 5 s, takes the median of valid pitches, then
+    // applies a sanity check (80–300 Hz) before committing.
+    // Reuses the existing audio pipeline if it's already running.
+    // ============================================================
+    function applySa(freq) {
+      saFreq = freq;
+      document.getElementById('saSelect').value = '';
+      document.getElementById('saHz').textContent = freq.toFixed(2) + ' Hz';
+      onSaChanged();
+      computeSwarFreqs();
+    }
+
+    async function detectSa() {
+      const overlay = document.getElementById('detectOverlay');
+      const detectBox = overlay.querySelector('.detect-box');
+
+      // Reset overlay to listening state
+      detectBox.innerHTML = `
+        <p>Sing or play your Sa steadily...</p>
+        <div class="detect-hz" id="detectHz">— Hz</div>
+        <div class="detect-countdown" id="detectCountdown">5s remaining</div>
+      `;
+      overlay.classList.add('show');
+
+      // Reuse existing pipeline if available, else open a temporary one
+      const usingExisting = !!analyser;
+      let tempCtx = null, tempAnalyser = null, tempStream = null;
+
+      if (!usingExisting) {
+        try {
+          tempCtx = new (window.AudioContext || window.webkitAudioContext)();
+          tempStream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+          });
+          const src = tempCtx.createMediaStreamSource(tempStream);
+          tempAnalyser = tempCtx.createAnalyser();
+          tempAnalyser.fftSize = 4096;
+          src.connect(tempAnalyser);
+        } catch (e) {
+          overlay.classList.remove('show');
+          return;
+        }
+      }
+
+      const activeAnalyser = usingExisting ? analyser : tempAnalyser;
+      const activeSampleRate = usingExisting ? audioCtx.sampleRate : tempCtx.sampleRate;
+
+      const detectedPitches = [];
+      const DURATION = 5000;
+      const start = Date.now();
+
+      function sample() {
+        const elapsed = Date.now() - start;
+        const hzDisp = document.getElementById('detectHz');
+        const cdDisp = document.getElementById('detectCountdown');
+
+        if (elapsed >= DURATION) {
+          // Tear down temporary pipeline (if we opened one)
+          if (!usingExisting) {
+            if (tempStream) tempStream.getTracks().forEach(t => t.stop());
+            if (tempCtx) tempCtx.close();
+          }
+
+          if (detectedPitches.length === 0) {
+            overlay.classList.remove('show');
+            return;
+          }
+
+          detectedPitches.sort((a, b) => a - b);
+          const median = detectedPitches[Math.floor(detectedPitches.length / 2)];
+
+          // Sanity check: typical Sa for a human voice is 80–300 Hz
+          if (median < 80 || median > 300) {
+            detectBox.innerHTML = `
+              <p>Detected: <strong style="color:var(--yellow)">${median.toFixed(1)} Hz</strong></p>
+              <p style="color:var(--text-dim);font-size:13px;margin-top:10px;line-height:1.6">
+                This is outside the typical Sa range (80–300 Hz).<br>
+                The mic may have picked up a harmonic or background noise.
+              </p>
+              <div style="display:flex;gap:12px;justify-content:center;margin-top:20px">
+                <button class="btn" id="saAcceptBtn">Accept Anyway</button>
+                <button class="btn btn-detect" id="saRetryBtn">Try Again</button>
+              </div>
+            `;
+            overlay.classList.add('show');
+            document.getElementById('saAcceptBtn').addEventListener('click', () => {
+              applySa(median);
+              overlay.classList.remove('show');
+            });
+            document.getElementById('saRetryBtn').addEventListener('click', () => {
+              overlay.classList.remove('show');
+              setTimeout(detectSa, 80);
+            });
+            return;
+          }
+
+          overlay.classList.remove('show');
+          applySa(median);
+          return;
+        }
+
+        if (cdDisp) cdDisp.textContent = ((DURATION - elapsed) / 1000).toFixed(1) + 's remaining';
+
+        const buf = new Float32Array(activeAnalyser.fftSize);
+        activeAnalyser.getFloatTimeDomainData(buf);
+        const f = detectPitch(buf, activeSampleRate);
+        if (f > 50 && f < 500) {
+          detectedPitches.push(f);
+          if (hzDisp) hzDisp.textContent = f.toFixed(1) + ' Hz';
+        }
+
+        requestAnimationFrame(sample);
+      }
+
+      requestAnimationFrame(sample);
+    }
+
+    // ============================================================
+    // REFERENCE TONES
+    // All tones share the same AudioContext as the mic pipeline.
+    // OscillatorNodes are one-shot: create a new one each time.
+    // ============================================================
+
+    // Fade a gain to 0 and schedule the oscillator to stop cleanly.
+    function fadeAndStop(osc, gain, ctx) {
+      gain.gain.cancelScheduledValues(ctx.currentTime);
+      gain.gain.setTargetAtTime(0, ctx.currentTime, 0.03);
+      try { osc.stop(ctx.currentTime + 0.15); } catch(e) {}
+    }
+
+    // Call whenever saFreq changes: glide the Sa drone, cancel other tones.
+    function onSaChanged() {
+      if (saOsc && audioCtx) saOsc.frequency.setTargetAtTime(saFreq, audioCtx.currentTime, 0.05);
+      stopSwarTone(true);
+      stopScale();
+    }
+
+    // ---- Play Sa drone ----
+    async function togglePlaySa() {
+      const ctx = await ensureAudioCtx();
+      const btn = document.getElementById('playSaBtn');
+      if (saOsc) {
+        fadeAndStop(saOsc, saOscGain, ctx);
+        saOsc = null; saOscGain = null;
+        btn.textContent = '♪ Sa';
+        btn.classList.remove('active');
+        return;
+      }
+      saOsc = ctx.createOscillator();
+      saOscGain = ctx.createGain();
+      saOsc.type = 'sine';
+      saOsc.frequency.value = saFreq;
+      saOscGain.gain.setValueAtTime(0, ctx.currentTime);
+      saOscGain.gain.linearRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+      saOsc.connect(saOscGain);
+      saOscGain.connect(ctx.destination);
+      saOsc.start();
+      btn.textContent = '■ Sa';
+      btn.classList.add('active');
+    }
+
+    // ---- Swar strip tap: play that swar for 2 s ----
+    function stopSwarTone(immediate) {
+      if (swarToneTimer) { clearTimeout(swarToneTimer); swarToneTimer = null; }
+      if (immediate && swarToneOsc && audioCtx) {
+        try {
+          swarToneGain.gain.cancelScheduledValues(audioCtx.currentTime);
+          swarToneGain.gain.setValueAtTime(0, audioCtx.currentTime);
+          swarToneOsc.stop(audioCtx.currentTime + 0.01);
+        } catch(e) {}
+      }
+      swarToneOsc = null; swarToneGain = null;
+      document.querySelectorAll('.swar-block.playing').forEach(b => b.classList.remove('playing'));
+    }
+
+    async function playSwarTone(ratioIdx) {
+      const ctx = await ensureAudioCtx();
+      stopSwarTone(true);
+      stopScale();
+
+      const s = SWAR_RATIOS[ratioIdx];
+      const freq = saFreq * s.ratio;   // Madhya saptak
+
+      swarToneOsc = ctx.createOscillator();
+      swarToneGain = ctx.createGain();
+      swarToneOsc.type = 'sine';
+      swarToneOsc.frequency.value = freq;
+
+      const now = ctx.currentTime;
+      swarToneGain.gain.setValueAtTime(0, now);
+      swarToneGain.gain.linearRampToValueAtTime(0.3, now + 0.05);   // 50 ms fade-in
+      swarToneGain.gain.setValueAtTime(0.3, now + 1.9);
+      swarToneGain.gain.linearRampToValueAtTime(0, now + 2.0);      // 100 ms fade-out
+
+      swarToneOsc.connect(swarToneGain);
+      swarToneGain.connect(ctx.destination);
+      swarToneOsc.start(now);
+      swarToneOsc.stop(now + 2.0);
+
+      freqInfoEl.textContent = `♪ ${s.name}${s.variant ? ' · ' + s.variant : ''} — ${freq.toFixed(1)} Hz`;
+      const block = document.querySelector(`.swar-block[data-idx="${ratioIdx}"]`);
+      if (block) block.classList.add('playing');
+
+      swarToneTimer = setTimeout(() => {
+        swarToneOsc = null; swarToneGain = null; swarToneTimer = null;
+        document.querySelectorAll('.swar-block.playing').forEach(b => b.classList.remove('playing'));
+        if (freqInfoEl.textContent.startsWith('♪')) freqInfoEl.textContent = '';
+      }, 2100);
+    }
+
+    // ---- Play Shuddha scale: Sa Re Ga Ma Pa Dha Ni Sa' ----
+    function stopScale() {
+      if (scaleTimer) { clearTimeout(scaleTimer); scaleTimer = null; }
+      if (scaleOscs.length && audioCtx) {
+        scaleOscs.forEach(osc => { try { osc.stop(audioCtx.currentTime); } catch(e) {} });
+        scaleOscs = [];
+      }
+      const btn = document.getElementById('playScaleBtn');
+      btn.textContent = '▷ Scale';
+      btn.classList.remove('active');
+    }
+
+    async function togglePlayScale() {
+      if (scaleOscs.length) { stopScale(); return; }
+      const ctx = await ensureAudioCtx();
+      stopSwarTone(true);
+
+      // Shuddha scale ratios: S R G M P D N S'
+      const SCALE = [1, 9/8, 5/4, 4/3, 3/2, 5/3, 15/8, 2];
+      const NOTE_DUR = 1.0, GAP = 0.1, FADE_IN = 0.05, FADE_OUT = 0.1;
+      let t = ctx.currentTime + 0.05;
+
+      for (const ratio of SCALE) {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = saFreq * ratio;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.3, t + FADE_IN);
+        gain.gain.setValueAtTime(0.3, t + NOTE_DUR - FADE_OUT);
+        gain.gain.linearRampToValueAtTime(0, t + NOTE_DUR);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + NOTE_DUR);
+        scaleOscs.push(osc);
+        t += NOTE_DUR + GAP;
+      }
+
+      const btn = document.getElementById('playScaleBtn');
+      btn.textContent = '■ Scale';
+      btn.classList.add('active');
+      // Auto-reset after all notes finish (8 notes × 1.1 s + small buffer)
+      scaleTimer = setTimeout(stopScale, (SCALE.length * (NOTE_DUR + GAP) + 0.3) * 1000);
+    }
+
+    // ============================================================
+    // NOISE FLOOR CALIBRATION
+    // Records 2 s of ambient silence, then sets rmsGate = 1.5 × measured floor.
+    // Works whether the mic pipeline is already running or not.
+    // ============================================================
+    async function calibrateMic() {
+      const btn = document.getElementById('calibrateBtn');
+
+      // Reuse the existing mic pipeline, or spin up a temporary one
+      const usingExisting = !!analyser;
+      let tempCtx = null, tempAnalyser = null, tempStream = null;
+      if (!usingExisting) {
+        try {
+          tempCtx = new (window.AudioContext || window.webkitAudioContext)();
+          tempStream = await navigator.mediaDevices.getUserMedia({
+            audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false },
+          });
+          const src = tempCtx.createMediaStreamSource(tempStream);
+          tempAnalyser = tempCtx.createAnalyser();
+          tempAnalyser.fftSize = 4096;
+          src.connect(tempAnalyser);
+        } catch (e) { return; }
+      }
+      const activeAnalyser = usingExisting ? analyser : tempAnalyser;
+
+      btn.disabled = true;
+      btn.textContent = '...';
+      feedbackEl.textContent = 'Calibrating... stay quiet';
+      feedbackEl.style.color = 'var(--yellow)';
+
+      const DURATION = 2000;
+      const start = Date.now();
+      let meanSquareSum = 0, sampleCount = 0;
+
+      function measure() {
+        const elapsed = Date.now() - start;
+        if (elapsed >= DURATION) {
+          if (!usingExisting && tempStream) tempStream.getTracks().forEach(t => t.stop());
+          if (!usingExisting && tempCtx) tempCtx.close();
+
+          if (sampleCount > 0) {
+            const avgRms = Math.sqrt(meanSquareSum / sampleCount);
+            rmsGate = Math.max(RMS_SILENCE_GATE / 4, avgRms * 1.5);
+            feedbackEl.textContent = `Noise floor calibrated (gate: ${rmsGate.toFixed(4)})`;
+            feedbackEl.style.color = 'var(--green)';
+          } else {
+            feedbackEl.textContent = 'Calibration failed — try again';
+            feedbackEl.style.color = 'var(--red)';
+          }
+
+          btn.disabled = false;
+          btn.textContent = 'Calibrate';
+          setTimeout(() => {
+            feedbackEl.textContent = isListening ? 'Listening...' : 'Press Start and sing';
+            feedbackEl.style.color = 'var(--text-dim)';
+          }, 3000);
+          return;
+        }
+
+        const buf = new Float32Array(activeAnalyser.fftSize);
+        activeAnalyser.getFloatTimeDomainData(buf);
+        let sum = 0;
+        for (let i = 0; i < buf.length; i++) sum += buf[i] * buf[i];
+        meanSquareSum += sum / buf.length;
+        sampleCount++;
+        requestAnimationFrame(measure);
+      }
+
+      requestAnimationFrame(measure);
+    }
+
+    // ============================================================
+    // EVENT LISTENERS
+    // ============================================================
+    document.getElementById('micBtn').addEventListener('click', () => {
+      if (isListening) stopMic();
+      else startMic();
+    });
+
+    document.getElementById('saSelect').addEventListener('change', (e) => {
+      if (e.target.value) {
+        saFreq = parseFloat(e.target.value);
+        document.getElementById('saHz').textContent = saFreq + ' Hz';
+        onSaChanged();
+        computeSwarFreqs();
+      }
+    });
+
+    document.getElementById('detectSaBtn').addEventListener('click', detectSa);
+    document.getElementById('calibrateBtn').addEventListener('click', calibrateMic);
+    document.getElementById('playSaBtn').addEventListener('click', togglePlaySa);
+    document.getElementById('playScaleBtn').addEventListener('click', togglePlayScale);
+
+    document.getElementById('toleranceSlider').addEventListener('input', (e) => {
+      toleranceCents = parseInt(e.target.value);
+    });
+
+    document.getElementById('komalBtn').addEventListener('click', () => {
+      showKomal = !showKomal;
+      document.getElementById('komalBtn').classList.toggle('active', showKomal);
+      buildSwarStrip();
+    });
+
+    // Fully tear down the audio pipeline when the page unloads
+    window.addEventListener('beforeunload', () => {
+      if (micStream) micStream.getTracks().forEach(t => t.stop());
+      if (audioCtx) audioCtx.close();
+    });
+
+    // Check browser support
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      document.getElementById('errorText').textContent = 'Your browser does not support microphone access. Please use Chrome or Firefox.';
+      document.getElementById('errorOverlay').classList.add('show');
+    }
+
+    // Init
+    computeSwarFreqs();
+  </script>
+</body>
+
+</html>
